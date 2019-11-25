@@ -1,10 +1,21 @@
 <?php
     class Book
     {
+        // private $id = '';
         private $title = '';
         private $price = '';
         private $author = '';
         private $isbn = '';
+
+        // public function getId()
+        // {
+        //     return $this->id;
+        // }
+
+        // public function setId($id)
+        // {
+        //     $this->id = $id;
+        // }
 
         public function getTitle()
         {

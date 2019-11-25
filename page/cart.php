@@ -11,7 +11,64 @@
     <link rel="stylesheet" href="../css/shoppingcart.css" />
   </head>
 <?php
-    $category = $_GET['category'];
+    require_once "../class/Book.php";
+    require_once "../class/DVD.php";
+
+    session_start();
+
+    $mode = '';
+
+    if (isset($_GET['mode']))
+    {
+        $mode = $_GET['mode'];
+    }
+
+    if ($mode == 'clear')
+    {
+        unset($_SESSION['cart']['book']);
+        unset($_SESSION['cart']['dvd']);
+    }
+    else
+    {
+        $category = '';
+
+        if (isset($_SESSION['category']))
+        {
+            $category = $_SESSION['category'];
+        }
+
+        $category_content_list = array();
+
+        if (isset($_SESSION['cart'][$category]))
+        {
+            foreach ($_SESSION['cart'][$category] as $ctgry)
+            {
+                $category_content_list[] = $ctgry;
+            }
+        }
+
+        if ($mode == 'add')
+        {
+            $category_list = array();
+
+            if ($category == 'book')
+            {
+                $category_list = $_SESSION['book_list'];
+            }
+            elseif ($category == 'dvd')
+            {
+                $category_list = $_SESSION['dvd_list'];
+            }
+
+            $index = $_GET['index'];
+
+            $category_content = $category_list[$index];
+
+            $category_content_list[] = $category_content;
+
+            $_SESSION['cart'][$category] = $category_content_list;
+        }
+    }
 ?>
   <body id="products" class="list">
     <header>
@@ -22,26 +79,45 @@
     <main>
       <article id="result">
         <h2>
-          商品検索 - 検索結果
+          カート
         </h2>
         <section>
           <h3>
-            商品一覧
+            選択された商品一覧
           </h3>
           <table>
             <caption>
-              <a href="entry.html">
-                検索画面に戻る
+              <a href="result.php">
+                商品一覧に戻る
               </a>
               &emsp;
-              <a href="cart.php">
-                カートの中身を見る
+              <a href="cart.php?mode=clear">
+                カートを空にする
               </a>
             </caption>
 <?php
-    if ($category == 'book')
+    if (!isset($_SESSION['cart']['book']) && !isset($_SESSION['cart']['dvd']))
     {
 ?>
+            <tr>
+              <td>
+                <p>
+                  カートに商品は入っていません。
+                <p>
+              </td>
+            </tr>
+<?php
+    }
+?>
+<?php
+    if (isset($_SESSION['cart']['book']))
+    {
+?>
+            <tr>
+              <td>
+                Book
+              </td>
+            </tr>
             <tr>
               <th>
                 書籍名
@@ -60,34 +136,35 @@
               </th>
             </tr>
 <?php
-        foreach ($book_list as $bk)
+        foreach ($_SESSION['cart']['book'] as $book_cart)
         {
 ?>
             <tr>
               <td>
-                <?= $bk->getTitle() ?>
+                <?= $book_cart->getTitle() ?>
               </td>
               <td>
-                <?= number_format($bk->getPrice()) ?>
+                <?= number_format($book_cart->getPrice()) ?>
               </td>
               <td>
-                <?= $bk->getAuthor() ?>
+                <?= $book_cart->getAuthor() ?>
               </td>
               <td>
-                <?= $bk->getISBN() ?>
-              </td>
-              <td>
-                <a href="cart.php">
-                  カートに入れる
-                </a>
+                <?= $book_cart->getISBN() ?>
               </td>
             </tr>
 <?php
         }
     }
-    elseif ($category == 'dvd')
+
+    if (isset($_SESSION['cart']['dvd']))
     {
 ?>
+            <tr>
+              <td>
+                DVD
+              </td>
+            </tr>
             <tr>
               <th>
                 タイトル
@@ -103,23 +180,18 @@
               </th>
             </tr>
 <?php
-        foreach ($dvd_list as $d)
+        foreach ($_SESSION['cart']['dvd'] as $dvd_cart)
         {
 ?>
             <tr>
               <td>
-                <?= $d->getTitle() ?>
+                <?= $dvd_cart->getTitle() ?>
               </td>
               <td>
-                <?= number_format($d->getPrice()) ?>
+                <?= number_format($dvd_cart->getPrice()) ?>
               </td>
               <td class="right">
-                <?= $d->getDuration() ?>
-              </td>
-              <td>
-                <a href="cart.php">
-                  カートに入れる
-                </a>
+                <?= $dvd_cart->getDuration() ?>
               </td>
             </tr>
 <?php

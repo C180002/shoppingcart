@@ -1,9 +1,20 @@
 <?php
     class DVD
     {
+        // private $id = '';
         private $title = '';
         private $price = '';
         private $duration = '';
+
+        // public function getId()
+        // {
+        //     return $this->id;
+        // }
+
+        // public function setId($id)
+        // {
+        //     $this->id = $id;
+        // }
 
         public function getTitle()
         {

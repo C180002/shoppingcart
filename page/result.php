@@ -14,71 +14,112 @@
     require_once "../class/Book.php";
     require_once "../class/DVD.php";
 
+    session_start();
+
+    $category = '';
+
+    if (isset($_GET['category']))
+    {
+        $category = $_GET['category'];
+    }
+    else
+    {
+        if (isset($_SESSION['category']))
+        {
+            $category = $_SESSION['category'];
+        }
+    }
+    
+    $_SESSION['category'] = $category;
+
     $book_list = array();
 
-    $book = new Book();
+    if (isset($_SESSION['book_list']))
+    {
+        $book_list = $_SESSION['book_list'];
+    }
+    else
+    {
+        $book = new Book();
 
-    $book->setTitle('Head First PHP & MySQL');
-    $book->setPrice(4650);
-    $book->setAuthor('Lynn Beighley');
-    $book->setISBN('978-4873114446');
+        // $book->setId('B01');
+        $book->setTitle('Head First PHP & MySQL');
+        $book->setPrice(4650);
+        $book->setAuthor('Lynn Beighley');
+        $book->setISBN('978-4873114446');
 
-    $book_list[] = $book;
+        $book_list[] = $book;
 
-    $book = new Book();
+        $book = new Book();
 
-    $book->setTitle('リーダブルコード');
-    $book->setPrice(2600);
-    $book->setAuthor('Dustin Boswell');
-    $book->setISBN('978-4873115658');
+        // $book->setId('B02');
+        $book->setTitle('リーダブルコード');
+        $book->setPrice(2600);
+        $book->setAuthor('Dustin Boswell');
+        $book->setISBN('978-4873115658');
 
-    $book_list[] = $book;
+        $book_list[] = $book;
 
-    $book = new Book();
+        $book = new Book();
 
-    $book->setTitle('Head First デザインパターン');
-    $book->setPrice(5060);
-    $book->setAuthor('Eric Freeman');
-    $book->setISBN('978-4873112497');
+        // $book->setId('B03');
+        $book->setTitle('Head First デザインパターン');
+        $book->setPrice(5060);
+        $book->setAuthor('Eric Freeman');
+        $book->setISBN('978-4873112497');
 
-    $book_list[] = $book;
+        $book_list[] = $book;
 
-    $book = new Book();
+        $book = new Book();
 
-    $book->setTitle('PHPによるデザインパターン入門');
-    $book->setPrice(2400);
-    $book->setAuthor('下岡 秀幸');
-    $book->setISBN('978-4798015163');
+        // $book->setId('B04');
+        $book->setTitle('PHPによるデザインパターン入門');
+        $book->setPrice(2400);
+        $book->setAuthor('下岡 秀幸');
+        $book->setISBN('978-4798015163');
 
-    $book_list[] = $book;
+        $book_list[] = $book;
+
+        $_SESSION['book_list'] = $book_list;
+    }
 
     $dvd_list = array();
 
-    $dvd = new DVD();
+    if (isset($_SESSION['dvd_list']))
+    {
+        $dvd_list = $_SESSION['dvd_list'];
+    }
+    else
+    {
+        $dvd = new DVD();
 
-    $dvd->setTitle('The Net');
-    $dvd->setPrice(500);
-    $dvd->setDuration(114);
+        // $book->setId('D01');
+        $dvd->setTitle('The Net');
+        $dvd->setPrice(500);
+        $dvd->setDuration(114);
 
-    $dvd_list[] = $dvd;
+        $dvd_list[] = $dvd;
 
-    $dvd = new DVD();
+        $dvd = new DVD();
 
-    $dvd->setTitle('Star Wars: Force Awakens');
-    $dvd->setPrice(2800);
-    $dvd->setDuration(150);
+        // $book->setId('D02');
+        $dvd->setTitle('Star Wars: Force Awakens');
+        $dvd->setPrice(2800);
+        $dvd->setDuration(150);
 
-    $dvd_list[] = $dvd;
+        $dvd_list[] = $dvd;
 
-    $dvd = new DVD();
+        $dvd = new DVD();
 
-    $dvd->setTitle('Outbreak');
-    $dvd->setPrice(900);
-    $dvd->setDuration(129);
+        // $book->setId('D03');
+        $dvd->setTitle('Outbreak');
+        $dvd->setPrice(900);
+        $dvd->setDuration(129);
 
-    $dvd_list[] = $dvd;
+        $dvd_list[] = $dvd;
 
-    $category = $_GET['category'];
+        $_SESSION['dvd_list'] = $dvd_list;
+    }
 ?>
   <body id="products" class="list">
     <header>
@@ -127,24 +168,24 @@
               </th>
             </tr>
 <?php
-        foreach ($book_list as $bk)
+        for ($i = 0; $i < count($book_list); $i++)
         {
 ?>
             <tr>
               <td>
-                <?= $bk->getTitle() ?>
+                <?= $book_list[$i]->getTitle() ?>
               </td>
               <td>
-                <?= number_format($bk->getPrice()) ?>
+                <?= number_format($book_list[$i]->getPrice()) ?>
               </td>
               <td>
-                <?= $bk->getAuthor() ?>
+                <?= $book_list[$i]->getAuthor() ?>
               </td>
               <td>
-                <?= $bk->getISBN() ?>
+                <?= $book_list[$i]->getISBN() ?>
               </td>
               <td>
-                <a href="cart.php">
+                <a href="cart.php?mode=add&index=<?= $i ?>">
                   カートに入れる
                 </a>
               </td>
@@ -170,21 +211,21 @@
               </th>
             </tr>
 <?php
-        foreach ($dvd_list as $d)
+        for ($i = 0; $i < count($dvd_list); $i++)
         {
 ?>
             <tr>
               <td>
-                <?= $d->getTitle() ?>
+                <?= $dvd_list[$i]->getTitle() ?>
               </td>
               <td>
-                <?= number_format($d->getPrice()) ?>
+                <?= number_format($dvd_list[$i]->getPrice()) ?>
               </td>
               <td class="right">
-                <?= $d->getDuration() ?>
+                <?= $dvd_list[$i]->getDuration() ?>
               </td>
               <td>
-                <a href="cart.php">
+                <a href="cart.php?mode=add&index=<?= $i ?>">
                   カートに入れる
                 </a>
               </td>
