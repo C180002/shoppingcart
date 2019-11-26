@@ -11,8 +11,8 @@
     <link rel="stylesheet" href="../css/shoppingcart.css" />
   </head>
 <?php
-    require_once "../class/Book.php";
-    require_once "../class/DVD.php";
+    require_once('../class/Book.php');
+    require_once('../class/DVD.php');
 
     session_start();
 
